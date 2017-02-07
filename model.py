@@ -46,9 +46,6 @@ def create_training_data(data_folder, include_side_images=False):
     X_train = []
     y_train = []
     for image_data, steering_angle in read_driving_data(data_folder, include_side_images):
-        # if random.random() < 0.5:
-        #     image_data = np.fliplr(image_data)
-        #     steering_angle = -steering_angle
         X_train.append(image_data)
         y_train.append(steering_angle)
     print('{} total training samples'.format(len(X_train)))
@@ -61,16 +58,10 @@ def show_layer_info(model):
         print('  Layer {:2} {:16} input shape {} output shape {}'.format(n, layer.name, layer.input_shape, layer.output_shape))
 
 
-# def train(model, training_generator, samples_per_epoch, nb_epoch=10):
-#     model.compile('adam', 'mse')
-#     model.fit_generator(training_generator, samples_per_epoch=samples_per_epoch, nb_epoch=nb_epoch, verbose=2)
-#     model.save('model.h5')
-
-
 def train(model, X_train, y_train, nb_epoch=10):
     model.compile('adam', 'mse')
+    # Use a callback to save the model with lowest validation score
     callbacks = [ModelCheckpoint('checkpoint.h5', monitor='val_loss', save_best_only=True, verbose=0)]
-
     model.fit(X_train, y_train, validation_split=0.2, nb_epoch=nb_epoch, verbose=2, callbacks=callbacks)
     model.save('model.h5')
 
@@ -100,30 +91,21 @@ def create_model():
     return model
 
 
-# def generator(X_train, y_train):
-#     assert len(X_train) == len(y_train)
-#     sample_count = len(X_train)
-#     while 1:
-#         #i = randrange(sample_count)
-#         # for i in range(sample_count):
-#         #     yield X_train[i:i+1], y_train[i:i+1]
-#         yield X_train, y_train
-
 nb_epochs = int(sys.argv[1])
 
+# Support providing multiple data folders on the command line
 X_list = []
 y_list = []
 for data_folder in sys.argv[2:]:
     X, y = create_training_data(data_folder, False)
     X_list.append(X)
     y_list.append(y)
+# Combine all the training sets
 X_train = np.concatenate(X_list)
 y_train = np.concatenate(y_list)
     
-
 model = create_model()
 show_layer_info(model)
-#training_generator = generator(X_train, y_train)
 
 train(model, X_train, y_train, nb_epochs)
 

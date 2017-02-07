@@ -12,7 +12,7 @@ from PIL import ImageOps
 from flask import Flask, render_template
 from io import BytesIO
 
-from keras.models import model_from_json
+from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array
 
 # Fix error with Keras and TensorFlow
@@ -36,6 +36,7 @@ def telemetry(sid, data):
     # The current image from the center camera of the car
     imgString = data["image"]
     image = Image.open(BytesIO(base64.b64decode(imgString)))
+    image = image.resize((image.width//4, image.height//4), Image.BILINEAR)
     image_array = np.asarray(image)
     transformed_image_array = image_array[None, :, :, :]
     # This model currently assumes that the features of the model are just the images. Feel free to change this.
@@ -55,7 +56,7 @@ def connect(sid, environ):
 def send_control(steering_angle, throttle):
     sio.emit("steer", data={
     'steering_angle': steering_angle.__str__(),
-    'throttle': throttle.__str__()
+    'throttle': throttle.__str__() 
     }, skip_sid=True)
 
 
@@ -64,22 +65,25 @@ if __name__ == '__main__':
     parser.add_argument('model', type=str,
     help='Path to model definition json. Model weights should be on the same path.')
     args = parser.parse_args()
-    with open(args.model, 'r') as jfile:
+    #with open(args.model, 'r') as jfile:
         # NOTE: if you saved the file by calling json.dump(model.to_json(), ...)
         # then you will have to call:
         #
         #   model = model_from_json(json.loads(jfile.read()))\
         #
         # instead.
-        model = model_from_json(jfile.read())
+        #model = model_from_json(jfile.read())
 
 
-    model.compile("adam", "mse")
-    weights_file = args.model.replace('json', 'h5')
-    model.load_weights(weights_file)
+    #model.compile("adam", "mse")
+    #weights_file = args.model.replace('json', 'h5')
+    #model.load_weights(weights_file)
+    model = load_model(args.model)
 
     # wrap Flask application with engineio's middleware
     app = socketio.Middleware(sio, app)
 
     # deploy as an eventlet WSGI server
     eventlet.wsgi.server(eventlet.listen(('', 4567)), app)
+
+    

@@ -11,13 +11,12 @@ from keras.layers import Convolution2D, MaxPooling2D
 from keras.callbacks import ModelCheckpoint
 
 
-def get_record_and_image(index):
-    return record, Image.open(path)
-
-
 def get_image_training_data(path):
+    '''Loads, scales and normalizes an image and returns the resulting data as a
+    NumPy array
+    '''
     image = Image.open(path)
-    # Scale the image down to half resolution
+    # Scale the image down to quarter resolution
     image = image.resize((image.width // 4, image.height // 4), Image.BILINEAR)
     image_data = np.array(image)
     # Return image data  normalized to range [-0.5, 0.5]
@@ -25,6 +24,12 @@ def get_image_training_data(path):
 
 
 def read_driving_data(data_folder, include_side_images=False):
+    '''Generates (image, steering) pairs from given driving data
+
+    By default return only the center image and its steering angle, but if
+    include_side_images is True, generates data also for the left and right
+    image.
+    '''
     log_path = os.path.join(data_folder, 'driving_log.csv')
     df = pd.read_csv(log_path)
     for i in tqdm(range(len(df))):
@@ -42,6 +47,7 @@ def read_driving_data(data_folder, include_side_images=False):
 
             
 def create_training_data(data_folder, include_side_images=False):
+    '''Creates training data (X_train, y_train) from recorded simulator driving data'''
     print('Creating training data from {}'.format(data_folder))
     X_train = []
     y_train = []
@@ -53,12 +59,16 @@ def create_training_data(data_folder, include_side_images=False):
 
 
 def show_layer_info(model):
+    '''Shows Keras model layers and their dimensions'''
     print('Layer info for model:')
     for n, layer in enumerate(model.layers, 1):
         print('  Layer {:2} {:16} input shape {} output shape {}'.format(n, layer.name, layer.input_shape, layer.output_shape))
 
 
 def train(model, X_train, y_train, nb_epoch=10):
+    '''Trains a Keras model with Adam optimizer for given number of Epochs and saves
+    the resulting model
+    '''
     model.compile('adam', 'mse')
     # Use a callback to save the model with lowest validation score
     callbacks = [ModelCheckpoint('checkpoint.h5', monitor='val_loss', save_best_only=True, verbose=0)]
@@ -67,6 +77,11 @@ def train(model, X_train, y_train, nb_epoch=10):
 
 
 def create_model():
+    '''Creates the Keras model for behavioral cloning project
+
+    The model is based on the NVidia model described in
+    http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf
+    '''
     model = Sequential()
     #model.add(Convolution2D(24, 5, 5, border_mode='valid', subsample=(2, 2), input_shape=(80, 160, 3)))
     model.add(Convolution2D(24, 5, 5, border_mode='valid', input_shape=(40, 80, 3)))

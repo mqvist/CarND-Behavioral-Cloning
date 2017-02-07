@@ -36,6 +36,7 @@ def telemetry(sid, data):
     # The current image from the center camera of the car
     imgString = data["image"]
     image = Image.open(BytesIO(base64.b64decode(imgString)))
+    # Scale the image similarly to the training
     image = image.resize((image.width//4, image.height//4), Image.BILINEAR)
     image_array = np.asarray(image)
     transformed_image_array = image_array[None, :, :, :]
@@ -65,19 +66,7 @@ if __name__ == '__main__':
     parser.add_argument('model', type=str,
     help='Path to model definition json. Model weights should be on the same path.')
     args = parser.parse_args()
-    #with open(args.model, 'r') as jfile:
-        # NOTE: if you saved the file by calling json.dump(model.to_json(), ...)
-        # then you will have to call:
-        #
-        #   model = model_from_json(json.loads(jfile.read()))\
-        #
-        # instead.
-        #model = model_from_json(jfile.read())
-
-
-    #model.compile("adam", "mse")
-    #weights_file = args.model.replace('json', 'h5')
-    #model.load_weights(weights_file)
+    # Simplified loading of the model from a single .h5 file
     model = load_model(args.model)
 
     # wrap Flask application with engineio's middleware

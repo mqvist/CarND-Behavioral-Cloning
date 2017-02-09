@@ -12,13 +12,9 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image1]: ./report_images/center_2016_12_01_13_31_13_037.jpg
+[image2]: ./report_images/center_2017_02_07_19_00_02_859.jpg
+[image3]: ./report_images/right_2017_02_07_19_40_42_810.jpg
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -157,12 +153,12 @@ images, but I decided to do another set that contained 1586 additional images.
 
 Here is an example of center lane driving from the Udacity driving data:
 
-![alt text][./report_images/center_2016_12_01_13_31_13_037.jpg]
+![Center lane driving][image1]
 
 Here are couple images from the recovery sets:
 
-![alt text][./report_images/center_2017_02_07_19_00_02_859.jpg]
-![alt text][./report_images/right_2017_02_07_19_40_42_810.jpg]
+![Recovery from left side of the road][image2]
+![Recovery from right side of the road][image3]
 
 After the collection process, I had 10591 number of data points.
 

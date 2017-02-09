@@ -1,6 +1,6 @@
 #**Behavioral Cloning** 
 
-**Behavrioal Cloning Project**
+**Behavioral Cloning Project**
 
 The goals / steps of this project are the following:
 * Use the simulator to collect data of good driving behavior
@@ -152,7 +152,17 @@ neural network with the following layers and layer sizes:
 
 As the basis for the training data I used the Udacity's sample driving data from
 the project resources. I then recorded the vehicle recovering from the left side
-and right sides of the road back to center.
+and right sides of the road back to center. The first recovery set was ~969
+images, but I decided to do another set that contained 1586 additional images.
+
+Here is an example of center lane driving from the Udacity driving data:
+
+![alt text][./report_images/center_2016_12_01_13_31_13_037.jpg]
+
+Here are couple images from the recovery sets:
+
+![alt text][./report_images/center_2017_02_07_19_00_02_859.jpg]
+![alt text][./report_images/right_2017_02_07_19_40_42_810.jpg]
 
 After the collection process, I had 10591 number of data points.
 
